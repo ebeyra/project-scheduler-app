@@ -14,7 +14,7 @@ const managerSchema = new Schema(
       default: "temp",
     },
     hireDate: {
-      type: String,
+      type: Date,
       default: "temp",
     },
     role: {
