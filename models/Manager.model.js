@@ -7,10 +7,16 @@ const managerSchema = new Schema(
       unique: true,
     },
     password: String,
-    admin: false,
-    editor: true,
-    employeeID: "temp",
-    hireDate: "temp",
+    admin: Boolean,
+    editor: Boolean,
+    employeeID: {
+      type: String,
+      default: "temp",
+    },
+    hireDate: {
+      type: String,
+      default: "temp",
+    },
     role: {
       type: String,
       enum: ["MGR", "FOH", "BOH"],

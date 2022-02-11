@@ -7,8 +7,8 @@ const adminSchema = new Schema(
       unique: true,
     },
     password: String,
-    admin: true,
-    editor: true,
+    admin: Boolean,
+    editor: Boolean,
   },
   {
     timestamps: true,
