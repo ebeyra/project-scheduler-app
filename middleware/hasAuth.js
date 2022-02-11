@@ -1,6 +1,6 @@
 const isAdmin = (req, res, next) => {
   if (!req.session.user.admin) {
-    return res.redirect("/");
+    return res.redirect("/access-denied");
   }
   req.user = req.session.user;
   next();
@@ -8,7 +8,7 @@ const isAdmin = (req, res, next) => {
 
 const isEditor = (req, res, next) => {
   if (!req.session.user.editor) {
-    return res.redirect("/");
+    return res.redirect("/access-denied");
   }
   req.user = req.session.user;
   next();
