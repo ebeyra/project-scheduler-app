@@ -1,0 +1,28 @@
+<h2>Create Manager</h2>
+<form method="POST" action="/admin/create-manager">
+  <input type="text" name="username" placeholder="Username" />
+  <br />
+  <input type="password" name="password" placeholder="Password" />
+  <br />
+  <input type="text" name="employeeID" placeholder="Employee ID" />
+  <br />
+  <select name="role">
+    <option>Role</option>
+    <option value="MGR">Manager</option>
+  </select>
+  <br />
+  <select name="status">
+    <option>Status</option>
+    <option value="FT">Full-time</option>
+    <option value="PT">Part-time</option>
+  </select>
+  <br />
+  <label>Hire Date</label>
+  <br />
+  <input type="date" name="hireDate" placeholder="Hire Date" />
+  <br />
+  <input type="checkbox" name="editor" />
+  <label>Editor</label>
+  <br />
+  <button type="submit">Create Employee</button>
+</form>

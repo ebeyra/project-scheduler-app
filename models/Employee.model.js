@@ -7,15 +7,14 @@ const employeeSchema = new Schema(
       unique: true,
     },
     password: String,
-    admin: Boolean,
-    editor: Boolean,
+    fullName: String,
     employeeID: {
       type: String,
-      default: "temp"
+      default: "temp",
     },
     hireDate: {
       type: String,
-      default: "temp"
+      default: "temp",
     },
     role: {
       type: String,
@@ -24,6 +23,19 @@ const employeeSchema = new Schema(
     status: {
       type: String,
       enum: ["FT", "PT"],
+    },
+    admin: {
+      type: String,
+      on: true,
+    },
+    editor: {
+      type: String,
+      on: true,
+    },
+    reportsTo: {
+      type: Schema.Types.ObjectId,
+      ref: "Employee",
+      default: "6206ded3e4558a8cdc273914",
     },
   },
   {

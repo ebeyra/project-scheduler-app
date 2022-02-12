@@ -12,27 +12,27 @@ const adminAccount = {
   editor: true,
 };
 
-const managerAccount = {
-  username: "a.smith",
-  password: "smith",
-  admin: false,
-  editor: true,
-  employeeID: "mgr001",
-  hireDate: new Date(2021, 02, 11),
-  role: "MGR",
-  status: "FT",
-};
+// const managerAccount = {
+//   username: "a.smith",
+//   password: "smith",
+//   admin: false,
+//   editor: true,
+//   employeeID: "mgr001",
+//   hireDate: new Date(2021, 02, 11),
+//   role: "MGR",
+//   status: "FT",
+// };
 
-const employeeAccount = {
-    username: "t.anderson",
-    password: "anderson",
-    admin: false,
-    editor: false,
-    employeeID: "emp001",
-    hireDate: new Date(2021, 02, 11),
-    role: "FOH",
-    status: "FT"
-};
+// const employeeAccount = {
+//     username: "t.anderson",
+//     password: "anderson",
+//     admin: false,
+//     editor: false,
+//     employeeID: "emp001",
+//     hireDate: new Date(2021, 02, 11),
+//     role: "FOH",
+//     status: "FT"
+// };
 
 // Seeding database
 
@@ -47,9 +47,9 @@ mongoose
     console.error("Error connecting to mongo: ", err);
   });
 
-Movie.create(movies)
+Admin.create(adminAccount)
   .then((results) => {
-    console.log("Movies added", results);
+    console.log("Administrator added", results);
   })
   .catch((err) => {
     console.log("Something went wrong", err);
