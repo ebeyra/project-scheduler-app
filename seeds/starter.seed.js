@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Model imports
 const Admin = require("../models/Admin.model");
-const Manager = require("../models/Manager.model");
+const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 const adminAccount = {
@@ -12,27 +12,27 @@ const adminAccount = {
   editor: true,
 };
 
-// const managerAccount = {
-//   username: "a.smith",
-//   password: "smith",
-//   admin: false,
-//   editor: true,
-//   employeeID: "mgr001",
-//   hireDate: new Date(2021, 02, 11),
-//   role: "MGR",
-//   status: "FT",
-// };
+const managerAccount = {
+  username: "a.smith",
+  password: "smith",
+  admin: false,
+  editor: true,
+  employeeID: "mgr001",
+  hireDate: new Date(2021, 02, 11),
+  role: "MGR",
+  status: "FT",
+};
 
-// const employeeAccount = {
-//     username: "t.anderson",
-//     password: "anderson",
-//     admin: false,
-//     editor: false,
-//     employeeID: "emp001",
-//     hireDate: new Date(2021, 02, 11),
-//     role: "FOH",
-//     status: "FT"
-// };
+const employeeAccount = {
+  username: "t.anderson",
+  password: "anderson",
+  admin: false,
+  editor: false,
+  employeeID: "emp001",
+  hireDate: new Date(2021, 02, 11),
+  role: "FOH",
+  status: "FT",
+};
 
 // Seeding database
 

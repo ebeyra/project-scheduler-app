@@ -5,7 +5,7 @@ const saltRounds = 10;
 
 // Model imports
 const Admin = require("../models/Admin.model");
-const Manager = require("../models/Manager.model");
+const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 // Middleware imports
@@ -14,6 +14,14 @@ const isLoggedIn = require("../middleware/isLoggedIn");
 
 router.get("/", (req, res, next) => {
   res.render("index");
+});
+
+router.get("/not-logged-in", (req, res, next) => {
+  res.render("not-logged-in");
+});
+
+router.get("/access-denied", (req, res, next) => {
+  res.render("access-denied");
 });
 
 module.exports = router;

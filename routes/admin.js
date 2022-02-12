@@ -5,7 +5,7 @@ const saltRounds = 10;
 
 // Model imports
 const Admin = require("../models/Admin.model");
-const Manager = require("../models/Manager.model");
+const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 // Middleware imports
@@ -58,13 +58,17 @@ router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
   res.render("admin/profile");
 });
 
-// View all database collections
+// View schedule
+
+router.get("/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
+  res.render("admin/view-schedule");
+});
+
+// View all employees
 
 router.get("/view-all", isLoggedIn, isAdmin, (req, res, next) => {
-  Admin.find().then((foundAdmins) => {
-    Employee.find().then((foundEmployees) => {
-      res.render("admin/view-all", { foundAdmins, foundEmployees });
-    });
+  Employee.find().then((foundEmployees) => {
+    res.render("admin/view-all", { foundEmployees });
   });
 });
 
@@ -104,6 +108,12 @@ router.post("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
     .catch((err) => {
       console.log("Something went wrong", err);
     });
+});
+
+// Create a schedule
+
+router.get("/create-schedule", isLoggedIn, isAdmin, (req, res, next) => {
+  res.render("admin/create-schedule");
 });
 
 // Create an employee account
@@ -190,6 +200,19 @@ router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
   })
     .then((results) => {
       console.log("Employee updated", results);
+      res.redirect("/admin/view-all");
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
+// Delete employee
+
+router.post("/:id/delete", function (req, res, next) {
+  Employee.findByIdAndRemove(req.params.id)
+    .then((results) => {
+      console.log("The employee has been deleted", results);
       res.redirect("/admin/view-all");
     })
     .catch((err) => {

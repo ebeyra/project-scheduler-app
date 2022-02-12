@@ -56,9 +56,6 @@ app.use("/admin", admin);
 const employee = require("./routes/employee");
 app.use("/employee", employee);
 
-const manager = require("./routes/manager");
-app.use("/manager", manager);
-
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 
