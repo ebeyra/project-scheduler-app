@@ -28,13 +28,13 @@ router.post("/login", (req, res, next) => {
   Admin.findOne({ username: req.body.username })
     .then((foundAdmin) => {
       if (!foundAdmin) {
-        return res.send("Incorrect username or password");
+        return res.send("Incorrect username");
       }
 
-      // const match = bcrypt.compareSync(req.body.password, foundAdmin.password);
+      const match = bcrypt.compareSync(req.body.password, foundAdmin.password);
 
-      if (!(req.body.password === foundAdmin.password)) {
-        return res.send("Incorrect username or password");
+      if (!match) {
+        return res.send("Incorrect password");
       }
 
       req.session.user = foundAdmin;
@@ -45,21 +45,68 @@ router.post("/login", (req, res, next) => {
     });
 });
 
-// If logged in, view profile, take actions
+// Log Out
+
+router.get("/logout", isLoggedIn, (req, res, next) => {
+  req.session.destroy();
+  res.render("admin/logout");
+});
+
+// Profile view for creation actions
 
 router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
   res.render("admin/profile");
 });
 
-// View all employees
+// View all database collections
 
 router.get("/view-all", isLoggedIn, isAdmin, (req, res, next) => {
-  Employee.find().then((results) => {
-    res.render("admin/view-all", { roster: results });
+  Admin.find().then((foundAdmins) => {
+    Employee.find().then((foundEmployees) => {
+      res.render("admin/view-all", { foundAdmins, foundEmployees });
+    });
   });
 });
 
-// Create employee
+// Create an admin account
+
+router.get("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
+  res.render("admin/create-admin");
+});
+
+router.post("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
+  if (!req.body.username) {
+    return res.send("You must enter a username");
+  } else if (!req.body.password) {
+    return res.send("You must enter a password");
+  } else if (!req.body.fullName) {
+    return res.send("You must enter a full name");
+  } else if (!req.body.employeeID) {
+    return res.send("You must enter an employee ID");
+  } else if (!req.body.hireDate) {
+    return res.send("You must enter a hire date");
+  }
+
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hashedPass = bcrypt.hashSync(req.body.password, salt);
+
+  Admin.create({
+    username: req.body.username,
+    password: hashedPass,
+    fullName: req.body.fullName,
+    employeeID: req.body.employeeID,
+    hireDate: req.body.hireDate,
+  })
+    .then((newAdmin) => {
+      console.log("Admin created", newAdmin);
+      res.redirect("/admin/view-all");
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
+// Create an employee account
 
 router.get("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
   res.render("admin/create-employee");
@@ -87,7 +134,7 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
 
   Employee.create({
     username: req.body.username,
-    password: req.body.password,
+    password: hashedPass,
     fullName: req.body.fullName,
     admin: req.body.admin,
     editor: req.body.editor,
@@ -105,26 +152,49 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
     });
 });
 
-// View single employee
+// View details on single account
 
 router.get("/:id", isLoggedIn, isAdmin, (req, res, next) => {
   Employee.findById(req.params.id)
     .then((results) => {
-      res.render("admin/employee-details", { employee: results });
+      console.log("Employee found", results);
+      res.render("admin/view-employee", { employee: results });
     })
     .catch((err) => {
       console.log("Something went wrong", err);
     });
 });
 
-// Edit employee
+// Edit employee details
 
-// router.get("/edit-employee", isAdmin, isLoggedIn, (req, res, next) => {
-//   res.render("admin/edit-employee");
-// });
+router.get("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
+  Employee.findById(req.params.id).then((results) => {
+    res.render("admin/edit-employee", { employee: results });
+  });
+});
 
-// router.post("/edit-employee", isAdmin, isLoggedIn, (req, res, next) => {
+router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hashedPass = bcrypt.hashSync(req.body.password, salt);
 
-// })
+  Employee.findByIdAndUpdate(req.params.id, {
+    username: req.body.username,
+    password: hashedPass,
+    fullName: req.body.fullName,
+    admin: req.body.admin,
+    editor: req.body.editor,
+    employeeID: req.body.employeeID,
+    hireDate: req.body.hireDate,
+    role: req.body.role,
+    status: req.body.status,
+  })
+    .then((results) => {
+      console.log("Employee updated", results);
+      res.redirect("/admin/view-all");
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
 
 module.exports = router;

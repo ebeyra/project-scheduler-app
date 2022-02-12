@@ -7,8 +7,23 @@ const adminSchema = new Schema(
       unique: true,
     },
     password: String,
-    admin: Boolean,
-    editor: Boolean,
+    fullName: String,
+    employeeID: {
+      type: String,
+      default: "temp",
+    },
+    hireDate: {
+      type: String,
+      default: "temp",
+    },
+    admin: {
+      type: Boolean,
+      default: true,
+    },
+    editor: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

@@ -1,10 +1,12 @@
 <h2>Edit Employee</h2>
-<form method="POST" action="/admin/edit-employee">
-  <input type="text" name="username" placeholder="Username" />
+<form method="POST" action="/admin/{{employee._id}}/edit-employee">
+  <input type="text" name="username" value={{employee.username}} />
   <br />
   <input type="password" name="password" placeholder="Password" />
   <br />
-  <input type="text" name="employeeID" placeholder="Employee ID" />
+  <input type="text" name="fullName" value="{{employee.fullName}}" />
+  <br />
+  <input type="text" name="employeeID" value={{employee.employeeID}} />
   <br />
   <select name="role">
     <option>Role</option>
@@ -21,7 +23,7 @@
   <br />
   <label>Hire Date</label>
   <br />
-  <input type="date" name="hireDate" placeholder="Hire Date" />
+  <input type="date" name="hireDate" value={{employee.hireDate}} />
   <br />
   <input type="checkbox" name="admin" />
   <label>Admin</label>
@@ -29,5 +31,5 @@
   <input type="checkbox" name="editor" />
   <label>Editor</label>
   <br />
-  <button type="submit">Create Employee</button>
+  <button type="submit">Confirm Changes</button>
 </form>

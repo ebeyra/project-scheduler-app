@@ -1,6 +1,12 @@
 <h1>Company Roster</h1>
-{{#each roster}}
+{{#each foundAdmins}}
   <ul>
-    {{fullName}}
+    <a href="/admin/{{_id}}">{{username}}</a>
+  </ul>
+{{/each}}
+<hr />
+{{#each foundEmployees}}
+  <ul>
+    <a href="/admin/{{_id}}">{{fullName}}</a>
   </ul>
 {{/each}}
