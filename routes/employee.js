@@ -71,7 +71,17 @@ router.get("/view-schedule", isLoggedIn, (req, res, next) => {
 
 router.get("/view-all", isLoggedIn, isEditor, (req, res, next) => {
   Employee.find().then((foundEmployees) => {
-    res.render("employee/view-all", { foundEmployees });
+    let frontOfHouse = [];
+    let backOfHouse = [];
+    for (let i = 0; i < foundEmployees.length; i++) {
+      if (foundEmployees[i].role === "FOH") {
+        frontOfHouse.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "BOH") {
+        backOfHouse.push(foundEmployees[i]);
+      }
+    }
+    res.render("employee/view-all", { frontOfHouse, backOfHouse });
   });
 });
 

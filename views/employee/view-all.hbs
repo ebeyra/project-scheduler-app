@@ -1,5 +1,12 @@
 <h1>Company Roster</h1>
-{{#each foundEmployees}}
+<h3>Front of House</h3>
+{{#each frontOfHouse}}
+  <ul>
+    <a href="/employee/{{_id}}">{{fullName}}</a>
+  </ul>
+{{/each}}
+<h3>Back of House</h3>
+{{#each backOfHouse}}
   <ul>
     <a href="/employee/{{_id}}">{{fullName}}</a>
   </ul>

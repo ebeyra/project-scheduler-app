@@ -12,6 +12,8 @@ const Employee = require("../models/Employee.model");
 const { isAdmin, isEditor } = require("../middleware/hasAuth");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
+// Free routes
+
 router.get("/", (req, res, next) => {
   res.render("index");
 });

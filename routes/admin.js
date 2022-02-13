@@ -68,7 +68,21 @@ router.get("/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
 
 router.get("/view-all", isLoggedIn, isAdmin, (req, res, next) => {
   Employee.find().then((foundEmployees) => {
-    res.render("admin/view-all", { foundEmployees });
+    let managers = [];
+    let frontOfHouse = [];
+    let backOfHouse = [];
+    for (let i = 0; i < foundEmployees.length; i++) {
+      if (foundEmployees[i].role === "MGR") {
+        managers.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "FOH") {
+        frontOfHouse.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "BOH") {
+        backOfHouse.push(foundEmployees[i]);
+      }
+    }
+    res.render("admin/view-all", { managers, frontOfHouse, backOfHouse });
   });
 });
 

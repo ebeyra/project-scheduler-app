@@ -1,3 +1,4 @@
+// Admin priviledges
 const isAdmin = (req, res, next) => {
   if (!req.session.user.admin) {
     return res.redirect("/access-denied");
@@ -6,6 +7,7 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
+// Manager priviledges
 const isEditor = (req, res, next) => {
   if (!req.session.user.editor) {
     return res.redirect("/access-denied");
