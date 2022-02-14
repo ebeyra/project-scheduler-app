@@ -1,6 +1,40 @@
-<h3>Schedules</h3>
-{{#each foundSchedule}}
-  <ul>
-    <a href="/admin/schedule/{{_id}}">{{date}}</a>
-  </ul>
-{{/each}}
+<h3>Schedule</h3>
+<div class="schedule-grid">
+  {{#each foundSchedule}}
+    <table border="1" cellspacing="1" cellpadding="1">
+      <thead>
+        <tr>
+          <td><a href="/admin/schedule/{{_id}}">{{date}}</a></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Managers</td>
+        </tr>
+        <tr>
+          <td>
+            {{#each mgr}}
+              <ul>{{this}}</ul>
+            {{/each}}
+          </td>
+        </tr>
+        <td>Front of House</td>
+        <tr>
+          <td>
+            {{#each foh}}
+              <ul>{{this}}</ul>
+            {{/each}}
+          </td>
+        </tr>
+        <td>Back of House</td>
+        <tr>
+          <td>
+            {{#each boh}}
+              <ul>{{this}}</ul>
+            {{/each}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  {{/each}}
+</div>

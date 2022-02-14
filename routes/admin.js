@@ -71,7 +71,6 @@ router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
 
 router.get("/schedule/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
-    console.log(foundSchedule);
     res.render("admin/schedule/view-schedule", { foundSchedule });
   });
 });
@@ -315,6 +314,58 @@ router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
     });
 });
 
+router.get(
+  "/schedule/:id/edit-schedule",
+  isLoggedIn,
+  isAdmin,
+  (req, res, next) => {
+    Schedule.findById(req.params.id).then((foundSchedule) => {
+      Employee.find().then((foundEmployees) => {
+        let managers = [];
+        let frontOfHouse = [];
+        let backOfHouse = [];
+        for (let i = 0; i < foundEmployees.length; i++) {
+          if (foundEmployees[i].role === "MGR") {
+            managers.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "FOH") {
+            frontOfHouse.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "BOH") {
+            backOfHouse.push(foundEmployees[i]);
+          }
+        }
+        res.render("admin/schedule/edit-schedule", {
+          foundSchedule,
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      });
+    });
+  }
+);
+
+router.post(
+  "/schedule/:id/edit-schedule",
+  isLoggedIn,
+  isAdmin,
+  (req, res, next) => {
+    Schedule.findByIdAndUpdate(req.params.id, {
+      mgr: req.body.mgr,
+      foh: req.body.foh,
+      boh: req.body.boh,
+    })
+      .then((results) => {
+        console.log("Schedule updated", results);
+        res.redirect("/admin/schedule/view-schedule");
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
+
 // Delete employee
 
 router.post("/:id/delete", function (req, res, next) {
@@ -322,6 +373,18 @@ router.post("/:id/delete", function (req, res, next) {
     .then((results) => {
       console.log("The employee has been deleted", results);
       res.redirect("/admin/view-all");
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
+// Delete Schedule
+router.post("/schedule/:id/delete", function (req, res, next) {
+  Schedule.findByIdAndRemove(req.params.id)
+    .then((results) => {
+      console.log("The schedule deleted", results);
+      res.redirect("/admin/schedule/view-schedule");
     })
     .catch((err) => {
       console.log("Something went wrong", err);

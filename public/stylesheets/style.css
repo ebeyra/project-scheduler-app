@@ -11,5 +11,7 @@ h1 {
   color: 15px;
 }
 
-/* Above is boilerplate */
+.schedule-grid {
+  display: flex;
+}
 

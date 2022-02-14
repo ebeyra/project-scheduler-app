@@ -1,0 +1,34 @@
+<h2>Edit Schedule</h2>
+<form
+  method="POST"
+  action="/admin/schedule/{{foundSchedule._id}}/edit-schedule"
+>
+  Managers
+  <br />
+  <select multiple name="mgr">
+    {{#each managers}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  Front of House
+  <br />
+  <select multiple name="foh">
+    {{#each frontOfHouse}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  Back of House
+  <br />
+  <select multiple name="boh">
+    {{#each backOfHouse}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  <button type="submit">Confirm Changes</button>
+</form>
+<form method="POST" action="/admin/schedule/{{foundSchedule._id}}/delete">
+  <button type="submit">Delete Schedule</button>
+</form>
