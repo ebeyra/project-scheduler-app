@@ -1,0 +1,30 @@
+<h2>Create Schedule</h2>
+<form method="POST" action="/admin/schedule/create-schedule">
+  <input type="date" name="date" />
+  <br />
+  Managers
+  <br />
+  <select multiple name="mgr">
+    {{#each managers}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  Front of House
+  <br />
+  <select multiple name="foh">
+    {{#each frontOfHouse}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  Back of House
+  <br />
+  <select multiple name="boh">
+    {{#each backOfHouse}}
+      <option value="{{fullName}}">{{fullName}}</option>
+    {{/each}}
+  </select>
+  <br />
+  <button type="submit">Create Schedule</button>
+</form>

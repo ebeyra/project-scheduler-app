@@ -2,6 +2,15 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const redirect = require("express/lib/response");
 const saltRounds = 10;
+const weekday = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 // Model imports
 const Admin = require("../models/Admin.model");
@@ -60,29 +69,39 @@ router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
 
 // View schedule
 
-router.get("/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
-  res.render("admin/view-schedule");
+router.get("/schedule/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
+  Schedule.find().then((foundSchedule) => {
+    console.log(foundSchedule);
+    res.render("admin/schedule/view-schedule", { foundSchedule });
+  });
 });
 
 // View all employees
 
 router.get("/view-all", isLoggedIn, isAdmin, (req, res, next) => {
-  Employee.find().then((foundEmployees) => {
-    let managers = [];
-    let frontOfHouse = [];
-    let backOfHouse = [];
-    for (let i = 0; i < foundEmployees.length; i++) {
-      if (foundEmployees[i].role === "MGR") {
-        managers.push(foundEmployees[i]);
+  Schedule.find().then((foundSchedule) => {
+    Employee.find().then((foundEmployees) => {
+      let managers = [];
+      let frontOfHouse = [];
+      let backOfHouse = [];
+      for (let i = 0; i < foundEmployees.length; i++) {
+        if (foundEmployees[i].role === "MGR") {
+          managers.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "FOH") {
+          frontOfHouse.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "BOH") {
+          backOfHouse.push(foundEmployees[i]);
+        }
       }
-      if (foundEmployees[i].role === "FOH") {
-        frontOfHouse.push(foundEmployees[i]);
-      }
-      if (foundEmployees[i].role === "BOH") {
-        backOfHouse.push(foundEmployees[i]);
-      }
-    }
-    res.render("admin/view-all", { managers, frontOfHouse, backOfHouse });
+      res.render("admin/view-all", {
+        foundSchedule,
+        managers,
+        frontOfHouse,
+        backOfHouse,
+      });
+    });
   });
 });
 
@@ -126,9 +145,69 @@ router.post("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
 
 // Create a schedule
 
-router.get("/create-schedule", isLoggedIn, isAdmin, (req, res, next) => {
-  res.render("admin/create-schedule");
-});
+router.get(
+  "/schedule/create-schedule",
+  isLoggedIn,
+  isAdmin,
+  (req, res, next) => {
+    Employee.find()
+      .then((foundEmployees) => {
+        let managers = [];
+        let frontOfHouse = [];
+        let backOfHouse = [];
+        for (let i = 0; i < foundEmployees.length; i++) {
+          if (foundEmployees[i].role === "MGR") {
+            managers.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "FOH") {
+            frontOfHouse.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "BOH") {
+            backOfHouse.push(foundEmployees[i]);
+          }
+        }
+        res.render("admin/schedule/create-schedule", {
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
+
+router.post(
+  "/schedule/create-schedule",
+  isLoggedIn,
+  isAdmin,
+  (req, res, next) => {
+    if (!req.body.date) {
+      return res.send("You must enter a date");
+    } else if (!req.body.mgr) {
+      return res.send("You must schedule at least one manager");
+    } else if (!req.body.foh) {
+      return res.send("You must schedule at least one front of house employee");
+    } else if (!req.body.boh) {
+      return res.send("You must schedule at least one back of house employee");
+    }
+
+    Schedule.create({
+      date: req.body.date,
+      mgr: req.body.mgr,
+      foh: req.body.foh,
+      boh: req.body.boh,
+    })
+      .then((newSchedule) => {
+        console.log("Schedule created", newSchedule);
+        res.redirect("/admin/profile");
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
 
 // Create an employee account
 
@@ -183,6 +262,21 @@ router.get("/:id", isLoggedIn, isAdmin, (req, res, next) => {
     .then((results) => {
       console.log("Employee found", results);
       res.render("admin/view-employee", { employee: results });
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
+// View details on single schedule
+
+router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
+  Schedule.findById(req.params.id)
+    .then((staff) => {
+      const d = new Date(staff.date);
+      let day = d.getDay();
+      let dayOfWeek = weekday[day + 1];
+      res.render("admin/schedule/schedule-details", { staff, dayOfWeek });
     })
     .catch((err) => {
       console.log("Something went wrong", err);

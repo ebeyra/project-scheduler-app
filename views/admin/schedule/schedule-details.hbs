@@ -1,0 +1,43 @@
+<h2>Schedule View Page</h2>
+<table border="1" cellspacing="1" cellpadding="1">
+  <thead>
+    <tr>
+      <th>{{dayOfWeek}}</th>
+    </tr>
+    <tr>
+      <td>{{staff.date}}</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Managers</td>
+    </tr>
+    <tr>
+      <td>
+        {{#each staff}}
+          <ul>{{mgr}}</ul>
+        {{/each}}
+      </td>
+    </tr>
+    <td>Front of House</td>
+    <tr>
+      <td>
+        {{#each staff}}
+          {{#each foh}}
+            <ul>{{this}}</ul>
+          {{/each}}
+        {{/each}}
+      </td>
+    </tr>
+    <td>Back of House</td>
+    <tr>
+      <td>
+        {{#each staff}}
+          {{#each boh}}
+            <ul>{{this}}</ul>
+          {{/each}}
+        {{/each}}
+      </td>
+    </tr>
+  </tbody>
+</table>
