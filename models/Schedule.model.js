@@ -3,7 +3,18 @@ const { Schema, model } = require("mongoose");
 
 const scheduleSchema = new Schema(
   {
-    type: String,
+    mgr: {
+      type: Schema.Types.ObjectId,
+      ref: "Employee",
+    },
+    foh: {
+      type: Schema.Types.ObjectId,
+      ref: "Employee",
+    },
+    boh: {
+      type: Schema.Types.ObjectId,
+      ref: "Employee",
+    },
   },
   {
     timestamps: true,
