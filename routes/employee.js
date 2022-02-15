@@ -2,6 +2,15 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const redirect = require("express/lib/response");
 const saltRounds = 10;
+const weekday = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 // Model imports
 const Admin = require("../models/Admin.model");
@@ -63,33 +72,105 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
 
 // View schedule
 
-router.get("/view-schedule", isLoggedIn, (req, res, next) => {
-  res.render("employee/view-schedule");
-});
-
+router.get(
+  "/schedule/view-schedule",
+  isLoggedIn,
+  isEditor,
+  (req, res, next) => {
+    Schedule.find().then((foundSchedule) => {
+      res.render("employee/schedule/view-schedule", { foundSchedule });
+    });
+  }
+);
 // View all employees
 
 router.get("/view-all", isLoggedIn, isEditor, (req, res, next) => {
-  Employee.find().then((foundEmployees) => {
-    let frontOfHouse = [];
-    let backOfHouse = [];
-    for (let i = 0; i < foundEmployees.length; i++) {
-      if (foundEmployees[i].role === "FOH") {
-        frontOfHouse.push(foundEmployees[i]);
+  Schedule.find().then((foundSchedule) => {
+    Employee.find().then((foundEmployees) => {
+      let frontOfHouse = [];
+      let backOfHouse = [];
+      for (let i = 0; i < foundEmployees.length; i++) {
+        if (foundEmployees[i].role === "FOH") {
+          frontOfHouse.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "BOH") {
+          backOfHouse.push(foundEmployees[i]);
+        }
       }
-      if (foundEmployees[i].role === "BOH") {
-        backOfHouse.push(foundEmployees[i]);
-      }
-    }
-    res.render("employee/view-all", { frontOfHouse, backOfHouse });
+      res.render("employee/view-all", {
+        foundSchedule,
+        frontOfHouse,
+        backOfHouse,
+      });
+    });
   });
 });
 
 // Create a schedule
 
-router.get("/create-schedule", isLoggedIn, isEditor, (req, res, next) => {
-  res.render("employee/create-schedule");
-});
+router.get(
+  "/schedule/create-schedule",
+  isLoggedIn,
+  isEditor,
+  (req, res, next) => {
+    Employee.find()
+      .then((foundEmployees) => {
+        let managers = [];
+        let frontOfHouse = [];
+        let backOfHouse = [];
+        for (let i = 0; i < foundEmployees.length; i++) {
+          if (foundEmployees[i].role === "MGR") {
+            managers.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "FOH") {
+            frontOfHouse.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "BOH") {
+            backOfHouse.push(foundEmployees[i]);
+          }
+        }
+        res.render("employee/schedule/create-schedule", {
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
+
+router.post(
+  "/schedule/create-schedule",
+  isLoggedIn,
+  isEditor,
+  (req, res, next) => {
+    if (!req.body.date) {
+      return res.send("You must enter a date");
+    } else if (!req.body.mgr) {
+      return res.send("You must schedule at least one manager");
+    } else if (!req.body.foh) {
+      return res.send("You must schedule at least one front of house employee");
+    } else if (!req.body.boh) {
+      return res.send("You must schedule at least one back of house employee");
+    }
+
+    Schedule.create({
+      date: req.body.date,
+      mgr: req.body.mgr,
+      foh: req.body.foh,
+      boh: req.body.boh,
+    })
+      .then((newSchedule) => {
+        console.log("Schedule created", newSchedule);
+        res.redirect("/employee/profile");
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
 
 // Create an employee account
 
@@ -150,6 +231,21 @@ router.get("/:id", isLoggedIn, isEditor, (req, res, next) => {
     });
 });
 
+//View details on a single schedule
+
+router.get("/schedule/:id", isLoggedIn, isEditor, (req, res, next) => {
+  Schedule.findById(req.params.id)
+    .then((staff) => {
+      const d = new Date(staff.date);
+      let day = d.getDay();
+      let dayOfWeek = weekday[day + 1];
+      res.render("employee/schedule/schedule-details", { staff, dayOfWeek });
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
 // Edit employee details
 
 router.get("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
@@ -182,6 +278,60 @@ router.post("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
     });
 });
 
+// Edit a schedule
+
+router.get(
+  "/schedule/:id/edit-schedule",
+  isLoggedIn,
+  isEditor,
+  (req, res, next) => {
+    Schedule.findById(req.params.id).then((foundSchedule) => {
+      Employee.find().then((foundEmployees) => {
+        let managers = [];
+        let frontOfHouse = [];
+        let backOfHouse = [];
+        for (let i = 0; i < foundEmployees.length; i++) {
+          if (foundEmployees[i].role === "MGR") {
+            managers.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "FOH") {
+            frontOfHouse.push(foundEmployees[i]);
+          }
+          if (foundEmployees[i].role === "BOH") {
+            backOfHouse.push(foundEmployees[i]);
+          }
+        }
+        res.render("employee/schedule/edit-schedule", {
+          foundSchedule,
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      });
+    });
+  }
+);
+
+router.post(
+  "/schedule/:id/edit-schedule",
+  isLoggedIn,
+  isEditor,
+  (req, res, next) => {
+    Schedule.findByIdAndUpdate(req.params.id, {
+      mgr: req.body.mgr,
+      foh: req.body.foh,
+      boh: req.body.boh,
+    })
+      .then((results) => {
+        console.log("Schedule updated", results);
+        res.redirect("/employee/schedule/view-schedule");
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  }
+);
+
 // Delete employee
 
 router.post("/:id/delete", function (req, res, next) {
@@ -189,6 +339,19 @@ router.post("/:id/delete", function (req, res, next) {
     .then((results) => {
       console.log("The employee has been deleted", results);
       res.redirect("/employee/view-all");
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
+});
+
+// Delete Schedule
+
+router.post("/schedule/:id/delete", function (req, res, next) {
+  Schedule.findByIdAndRemove(req.params.id)
+    .then((results) => {
+      console.log("The schedule deleted", results);
+      res.redirect("/employee/schedule/view-schedule");
     })
     .catch((err) => {
       console.log("Something went wrong", err);

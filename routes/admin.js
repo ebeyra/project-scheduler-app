@@ -314,6 +314,8 @@ router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
     });
 });
 
+// Edit a schedule
+
 router.get(
   "/schedule/:id/edit-schedule",
   isLoggedIn,
@@ -380,6 +382,7 @@ router.post("/:id/delete", function (req, res, next) {
 });
 
 // Delete Schedule
+
 router.post("/schedule/:id/delete", function (req, res, next) {
   Schedule.findByIdAndRemove(req.params.id)
     .then((results) => {
