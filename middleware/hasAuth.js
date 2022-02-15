@@ -16,4 +16,10 @@ const isEditor = (req, res, next) => {
   next();
 };
 
-module.exports = { isAdmin, isEditor };
+// const isEmployee = (req, res, next) => {
+//   if (!req.session.user.admin && !req.session.user.editor) {
+//     return res.render("employee/employee-profile");
+//   }
+// };
+
+module.exports = { isAdmin, isEditor, };

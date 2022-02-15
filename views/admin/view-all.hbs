@@ -1,20 +1,21 @@
-<h1>Company Roster</h1>
-<h3>Managers</h3>
-{{#each managers}}
-  <ul>
-    <a href="/admin/{{_id}}">{{fullName}}</a>
-  </ul>
-{{/each}}
-<hr />
-<h3>Front of House</h3>
-{{#each frontOfHouse}}
-  <ul>
-    <a href="/admin/{{_id}}">{{fullName}}</a>
-  </ul>
-{{/each}}
-<h3>Back of House</h3>
-{{#each backOfHouse}}
-  <ul>
-    <a href="/admin/{{_id}}">{{fullName}}</a>
-  </ul>
-{{/each}}
+<h1 class="roster">Company Roster</h1>
+<div class="roster-boxes">
+  <div class="houses">
+    <h3>Managers</h3>
+    {{#each managers}}
+      <a href="/admin/{{_id}}">{{fullName}}</a>
+    {{/each}}
+  </div>
+  <div class="houses">
+    <h3>Front of House</h3>
+    {{#each frontOfHouse}}
+      <a href="/admin/{{_id}}">{{fullName}}</a>
+    {{/each}}
+  </div>
+  <div class="houses">
+    <h3>Back of House</h3>
+    {{#each backOfHouse}}
+      <a href="/admin/{{_id}}">{{fullName}}</a>
+    {{/each}}
+  </div>
+</div>

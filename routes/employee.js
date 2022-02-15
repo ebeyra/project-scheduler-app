@@ -72,24 +72,23 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
 
 // View schedule
 
-router.get(
-  "/schedule/view-schedule",
-  isLoggedIn,
-  isEditor,
-  (req, res, next) => {
-    Schedule.find().then((foundSchedule) => {
-      res.render("employee/schedule/view-schedule", { foundSchedule });
-    });
-  }
-);
+router.get("/schedule/view-schedule", isLoggedIn, (req, res, next) => {
+  Schedule.find().then((foundSchedule) => {
+    res.render("employee/schedule/view-schedule", { foundSchedule });
+  });
+});
 // View all employees
 
-router.get("/view-all", isLoggedIn, isEditor, (req, res, next) => {
+router.get("/view-all", isLoggedIn, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
     Employee.find().then((foundEmployees) => {
+      let managers = [];
       let frontOfHouse = [];
       let backOfHouse = [];
       for (let i = 0; i < foundEmployees.length; i++) {
+        if (foundEmployees[i].role === "MGR") {
+          managers.push(foundEmployees[i]);
+        }
         if (foundEmployees[i].role === "FOH") {
           frontOfHouse.push(foundEmployees[i]);
         }
@@ -97,8 +96,9 @@ router.get("/view-all", isLoggedIn, isEditor, (req, res, next) => {
           backOfHouse.push(foundEmployees[i]);
         }
       }
-      res.render("employee/view-all", {
+      res.render("admin/view-all", {
         foundSchedule,
+        managers,
         frontOfHouse,
         backOfHouse,
       });

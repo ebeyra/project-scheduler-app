@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const redirect = require("express/lib/response");
+const axios = require("axios");
 const saltRounds = 10;
 const weekday = [
   "Sunday",
@@ -11,6 +12,25 @@ const weekday = [
   "Friday",
   "Saturday",
 ];
+const weatherForecast = {
+  method: "GET",
+  url: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily",
+  params: { lat: "25.7617", lon: "-80.1918" },
+  headers: {
+    "x-rapidapi-host": "weatherbit-v1-mashape.p.rapidapi.com",
+    "x-rapidapi-key": "f4ba7c63e8mshd3469625cf6b591p190b6bjsned2971a08c98",
+  },
+};
+
+const currentWeatherInfo = {
+  method: "GET",
+  url: "https://weatherbit-v1-mashape.p.rapidapi.com/current",
+  params: { lon: "-80.1918", lat: "25.7617" },
+  headers: {
+    "x-rapidapi-host": "weatherbit-v1-mashape.p.rapidapi.com",
+    "x-rapidapi-key": "f4ba7c63e8mshd3469625cf6b591p190b6bjsned2971a08c98",
+  },
+};
 
 // Model imports
 const Admin = require("../models/Admin.model");
@@ -281,6 +301,17 @@ router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
       console.log("Something went wrong", err);
     });
 });
+
+axios
+  .request(currentWeatherInfo)
+  .then((weatherInfo) => {
+    let temperature = weatherInfo.data.data[0].temp * (9 / 5) + 32;
+    console.log(temperature);
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 
 // Edit employee details
 

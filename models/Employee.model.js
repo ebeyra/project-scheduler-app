@@ -36,7 +36,6 @@ const employeeSchema = new Schema(
     reportsTo: {
       type: Schema.Types.ObjectId,
       ref: "Employee",
-      default: "6206ded3e4558a8cdc273914",
     },
   },
   {
