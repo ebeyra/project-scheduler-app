@@ -96,7 +96,7 @@ router.get("/view-all", isLoggedIn, (req, res, next) => {
           backOfHouse.push(foundEmployees[i]);
         }
       }
-      res.render("admin/view-all", {
+      res.render("employee/view-all", {
         foundSchedule,
         managers,
         frontOfHouse,

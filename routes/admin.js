@@ -53,19 +53,15 @@ router.post("/login", (req, res, next) => {
   } else if (!req.body.password) {
     res.send("You need a password");
   }
-
   Admin.findOne({ username: req.body.username })
     .then((foundAdmin) => {
       if (!foundAdmin) {
         return res.send("Incorrect username");
       }
-
       const match = bcrypt.compareSync(req.body.password, foundAdmin.password);
-
       if (!match) {
         return res.send("Incorrect password");
       }
-
       req.session.user = foundAdmin;
       res.render("admin/profile", { admin: req.session.user });
     })
@@ -84,8 +80,20 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
 // Profile view for creation actions
 
 router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
+  // axios
+  //   .request(currentWeatherInfo)
+  //   .then((weatherInfo) => {
+  //     let apiResponse = weatherInfo.data.data[0];
+  //     let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
+  //     let weatherDesc = apiResponse.weather.description;
+  //     let city = apiResponse.city_name;
+  //     res.render("admin/profile", { temperature, weatherDesc, city });
   res.render("admin/profile");
 });
+// .catch((err) => {
+//   console.log("Something went wrong", err);
+// });
+// });
 
 // View schedule
 
@@ -250,7 +258,7 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
   } else if (req.body.status === "Status") {
     return res.send("You must specify a status");
   }
-
+  console.log(req.body);
   const salt = bcrypt.genSaltSync(saltRounds);
   const hashedPass = bcrypt.hashSync(req.body.password, salt);
 
@@ -264,6 +272,7 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
     hireDate: req.body.hireDate,
     role: req.body.role,
     status: req.body.status,
+    reportsTo: req.body.reportsTo,
   })
     .then((newEmployee) => {
       console.log("Employee created", newEmployee);
@@ -278,6 +287,7 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
 
 router.get("/:id", isLoggedIn, isAdmin, (req, res, next) => {
   Employee.findById(req.params.id)
+    // .populate("reportsTo")
     .then((results) => {
       console.log("Employee found", results);
       res.render("admin/view-employee", { employee: results });
@@ -301,17 +311,6 @@ router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
       console.log("Something went wrong", err);
     });
 });
-
-axios
-  .request(currentWeatherInfo)
-  .then((weatherInfo) => {
-    let temperature = weatherInfo.data.data[0].temp * (9 / 5) + 32;
-    console.log(temperature);
-    console.log(response.data);
-  })
-  .catch(function (error) {
-    console.error(error);
-  });
 
 // Edit employee details
 

@@ -132,3 +132,14 @@ h1 {
   flex-direction: column;
   padding: 0 5%;
 }
+
+.weather-box {
+  display: flex;
+  flex-direction: column;
+  margin-right: 3%;
+  font-size: 0.8rem;
+  list-style-type: none;
+  position: absolute;
+  top: 17%;
+  right: 0;
+}
