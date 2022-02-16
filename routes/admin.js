@@ -38,7 +38,7 @@ const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 // Middleware imports
-const { isAdmin, isEditor } = require("../middleware/hasAuth");
+const { isAdmin, isEditor, isEmployee } = require("../middleware/hasAuth");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
 // Log In
@@ -149,6 +149,8 @@ router.post("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
     return res.send("You must enter an employee ID");
   } else if (!req.body.hireDate) {
     return res.send("You must enter a hire date");
+  } else if (req.body.privilege === "Privilege") {
+    return res.send("You must specify authorization level");
   }
 
   const salt = bcrypt.genSaltSync(saltRounds);
@@ -160,6 +162,7 @@ router.post("/create-admin", isLoggedIn, isAdmin, (req, res, next) => {
     fullName: req.body.fullName,
     employeeID: req.body.employeeID,
     hireDate: req.body.hireDate,
+    privilege: req.body.privilege,
   })
     .then((newAdmin) => {
       console.log("Admin created", newAdmin);
@@ -239,7 +242,27 @@ router.post(
 // Create an employee account
 
 router.get("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
-  res.render("admin/create-employee");
+  Employee.find().then((foundEmployees) => {
+    let managers = [];
+    let frontOfHouse = [];
+    let backOfHouse = [];
+    for (let i = 0; i < foundEmployees.length; i++) {
+      if (foundEmployees[i].role === "MGR") {
+        managers.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "FOH") {
+        frontOfHouse.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "BOH") {
+        backOfHouse.push(foundEmployees[i]);
+      }
+    }
+    res.render("admin/create-employee", {
+      managers,
+      frontOfHouse,
+      backOfHouse,
+    });
+  });
 });
 
 router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
@@ -257,8 +280,10 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
     return res.send("You must specify a role");
   } else if (req.body.status === "Status") {
     return res.send("You must specify a status");
+  } else if (req.body.privilege === "Privilege") {
+    return res.send("You must specify authorization level");
   }
-  console.log(req.body);
+
   const salt = bcrypt.genSaltSync(saltRounds);
   const hashedPass = bcrypt.hashSync(req.body.password, salt);
 
@@ -266,12 +291,11 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
     username: req.body.username,
     password: hashedPass,
     fullName: req.body.fullName,
-    admin: req.body.admin,
-    editor: req.body.editor,
     employeeID: req.body.employeeID,
     hireDate: req.body.hireDate,
     role: req.body.role,
     status: req.body.status,
+    privilege: req.body.privilege,
     reportsTo: req.body.reportsTo,
   })
     .then((newEmployee) => {
@@ -287,7 +311,6 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
 
 router.get("/:id", isLoggedIn, isAdmin, (req, res, next) => {
   Employee.findById(req.params.id)
-    // .populate("reportsTo")
     .then((results) => {
       console.log("Employee found", results);
       res.render("admin/view-employee", { employee: results });
@@ -315,9 +338,35 @@ router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
 // Edit employee details
 
 router.get("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
-  Employee.findById(req.params.id).then((results) => {
-    res.render("admin/edit-employee", { employee: results });
-  });
+  Employee.find()
+    .then((foundEmployees) => {
+      let managers = [];
+      let frontOfHouse = [];
+      let backOfHouse = [];
+      for (let i = 0; i < foundEmployees.length; i++) {
+        if (foundEmployees[i].role === "MGR") {
+          managers.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "FOH") {
+          frontOfHouse.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "BOH") {
+          backOfHouse.push(foundEmployees[i]);
+        }
+      }
+      Employee.findById(req.params.id).then((results) => {
+        console.log("Employee found", results);
+        res.render("admin/edit-employee", {
+          employee: results,
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
 });
 
 router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
@@ -328,12 +377,12 @@ router.post("/:id/edit-employee", isLoggedIn, isAdmin, (req, res, next) => {
     username: req.body.username,
     password: hashedPass,
     fullName: req.body.fullName,
-    admin: req.body.admin,
-    editor: req.body.editor,
     employeeID: req.body.employeeID,
     hireDate: req.body.hireDate,
     role: req.body.role,
     status: req.body.status,
+    privilege: req.body.privilege,
+    reportsTo: req.body.reportsTo,
   })
     .then((results) => {
       console.log("Employee updated", results);

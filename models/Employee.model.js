@@ -25,17 +25,13 @@ const employeeSchema = new Schema(
       type: String,
       enum: ["FT", "PT"],
     },
-    admin: {
+    privilege: {
       type: String,
-      on: true,
-    },
-    editor: {
-      type: String,
-      on: true,
+      enum: ["Admin", "Editor", "None"],
     },
     reportsTo: {
-      type: Schema.Types.ObjectId,
-      ref: "Employee",
+      type: String,
+      default: "Admin"
     },
   },
   {

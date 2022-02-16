@@ -18,7 +18,7 @@ const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 // Middleware imports
-const { isAdmin, isEditor } = require("../middleware/hasAuth");
+const { isAdmin, isEditor, isEmployee } = require("../middleware/hasAuth");
 const isLoggedIn = require("../middleware/isLoggedIn");
 
 // Log In
@@ -77,6 +77,7 @@ router.get("/schedule/view-schedule", isLoggedIn, (req, res, next) => {
     res.render("employee/schedule/view-schedule", { foundSchedule });
   });
 });
+
 // View all employees
 
 router.get("/view-all", isLoggedIn, (req, res, next) => {
@@ -175,7 +176,27 @@ router.post(
 // Create an employee account
 
 router.get("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
-  res.render("employee/create-employee");
+  Employee.find().then((foundEmployees) => {
+    let managers = [];
+    let frontOfHouse = [];
+    let backOfHouse = [];
+    for (let i = 0; i < foundEmployees.length; i++) {
+      if (foundEmployees[i].role === "MGR") {
+        managers.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "FOH") {
+        frontOfHouse.push(foundEmployees[i]);
+      }
+      if (foundEmployees[i].role === "BOH") {
+        backOfHouse.push(foundEmployees[i]);
+      }
+    }
+    res.render("employee/create-employee", {
+      managers,
+      frontOfHouse,
+      backOfHouse,
+    });
+  });
 });
 
 router.post("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
@@ -193,6 +214,10 @@ router.post("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
     return res.send("You must specify a role");
   } else if (req.body.status === "Status") {
     return res.send("You must specify a status");
+  } else if (req.body.privilege === "Privilege") {
+    return res.send("You must specify authorization level");
+  } else if (req.body.reportsTo === "Reports To") {
+    return res.send("You must specify reporting relationship");
   }
 
   const salt = bcrypt.genSaltSync(saltRounds);
@@ -202,12 +227,12 @@ router.post("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
     username: req.body.username,
     password: hashedPass,
     fullName: req.body.fullName,
-    admin: req.body.admin,
-    editor: req.body.editor,
     employeeID: req.body.employeeID,
     hireDate: req.body.hireDate,
     role: req.body.role,
     status: req.body.status,
+    privilege: req.body.privilege,
+    reportsTo: req.body.reportsTo,
   })
     .then((newEmployee) => {
       console.log("Employee created", newEmployee);
@@ -249,9 +274,34 @@ router.get("/schedule/:id", isLoggedIn, isEditor, (req, res, next) => {
 // Edit employee details
 
 router.get("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
-  Employee.findById(req.params.id).then((results) => {
-    res.render("employee/edit-employee", { employee: results });
-  });
+  Employee.find()
+    .then((foundEmployees) => {
+      let managers = [];
+      let frontOfHouse = [];
+      let backOfHouse = [];
+      for (let i = 0; i < foundEmployees.length; i++) {
+        if (foundEmployees[i].role === "MGR") {
+          managers.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "FOH") {
+          frontOfHouse.push(foundEmployees[i]);
+        }
+        if (foundEmployees[i].role === "BOH") {
+          backOfHouse.push(foundEmployees[i]);
+        }
+      }
+      Employee.findById(req.params.id).then((results) => {
+        res.render("employee/edit-employee", {
+          employee: results,
+          managers,
+          frontOfHouse,
+          backOfHouse,
+        });
+      });
+    })
+    .catch((err) => {
+      console.log("Something went wrong", err);
+    });
 });
 
 router.post("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
@@ -262,12 +312,12 @@ router.post("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
     username: req.body.username,
     password: hashedPass,
     fullName: req.body.fullName,
-    admin: req.body.admin,
-    editor: req.body.editor,
     employeeID: req.body.employeeID,
     hireDate: req.body.hireDate,
     role: req.body.role,
     status: req.body.status,
+    privilege: req.body.privilege,
+    reportsTo: req.body.reportsTo
   })
     .then((results) => {
       console.log("Employee updated", results);

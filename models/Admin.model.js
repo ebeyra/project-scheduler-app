@@ -17,13 +17,9 @@ const adminSchema = new Schema(
       type: String,
       default: "temp",
     },
-    admin: {
-      type: Boolean,
-      default: true,
-    },
-    editor: {
-      type: Boolean,
-      default: true,
+    privilege: {
+      type: String,
+      enum: ["Admin", "Editor", "None"],
     },
   },
   {
