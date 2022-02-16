@@ -1,30 +1,37 @@
+<div class="form-pages">
+  <div class="form-titles">
 <h2>Create Schedule</h2>
+</div>
+<div class="form-standard-sched">
 <form method="POST" action="/employee/schedule/create-schedule">
-  <input type="date" name="date" />
+  <label>Date</label>
+  <input type="date" name="date" class="login-box"/>
   <br />
-  Managers
+  <label>Managers</label>
   <br />
-  <select multiple name="mgr">
+  <select multiple name="mgr" class="login-box">
     {{#each managers}}
       <option value="{{fullName}}">{{fullName}}</option>
     {{/each}}
   </select>
   <br />
-  Front of House
+  <label>Front of House</label>
   <br />
-  <select multiple name="foh">
+  <select multiple name="foh" class="login-box">
     {{#each frontOfHouse}}
       <option value="{{fullName}}">{{fullName}}</option>
     {{/each}}
   </select>
   <br />
-  Back of House
+  <label>Back of House</label>
   <br />
-  <select multiple name="boh">
+  <select multiple name="boh" class="login-box">
     {{#each backOfHouse}}
       <option value="{{fullName}}">{{fullName}}</option>
     {{/each}}
   </select>
   <br />
-  <button type="submit">Create Schedule</button>
+  <button class="reg-button" type="submit">Create Schedule</button>
 </form>
+</div>
+</div>

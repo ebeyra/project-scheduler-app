@@ -22,6 +22,11 @@ h1 {
   transform: scale(0.5, 2);
 }
 
+.logout {
+  margin-top: 10%;
+  text-align: center;
+}
+
 .login-form {
   text-align: center;
   padding: 0 50px;
@@ -78,6 +83,28 @@ h1 {
   padding: 5%;
   margin-top: 10%;
 }
+.reg-button-details {
+  font-size: 17;
+  color: white;
+  background-color: royalblue;
+  border: none;
+  padding: 15px;
+  margin-top: -20px;
+}
+
+.reg-button-duo {
+  font-size: 15;
+  color: white;
+  background-color: royalblue;
+  border: none;
+  padding: 10px;
+  margin-top: 10px
+}
+
+.reg-button-details a {
+  text-decoration: none;
+  color: white;
+}
 
 .standard-page {
   text-align: center;
@@ -98,12 +125,12 @@ h1 {
 }
 
 .profile-box-images {
-  max-height: 75px;
-  max-width: 100px;
+  max-height: 100px;
+  max-width: 125px;
 }
 
 .profile-buttons {
-  font-size: 15;
+  font-size: 17;
   text-decoration: none;
   background-color: royalblue;
   border: none;
@@ -151,7 +178,7 @@ h1 {
   margin: 0;
 }
 
-.form-border {
+.form-standard {
   border: 1px solid black;
   width: 300px;
   height: 580px;
@@ -159,7 +186,7 @@ h1 {
   margin: auto;
   align-items: center;
 }
-.form-border-admin {
+.form-standard-admin {
   border: 1px solid black;
   width: 300px;
   height: 400px;
@@ -168,7 +195,39 @@ h1 {
   align-items: center;
 }
 
+.form-standard-sched {
+  border: 1px solid black;
+  width: 300px;
+  height: 520px;
+  padding: 30px;
+  margin: auto;
+  align-items: center;
+}
+
 .form-pages {
   text-align: center;
-  margin-top: 20px;;
+  margin-top: 20px;
+}
+
+.form-standard-details {
+  display: flex;
+  border: 1px solid black;
+  width: 400px;
+  height: 320px;
+  padding: 30px;
+  margin: auto;
+  justify-content: space-evenly;
+}
+
+.form-standard-details label {
+  color: royalblue;
+}
+
+.details-boxes {
+  width: 100%;
+  padding: 6px 10px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }

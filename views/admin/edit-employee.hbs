@@ -1,47 +1,77 @@
-<h2>Edit Employee</h2>
-<form method="POST" action="/admin/{{employee._id}}/edit-employee">
-  <input type="text" name="username" value={{employee.username}} />
-  <br />
-  <input type="password" name="password" placeholder="Password" />
-  <br />
-  <input type="text" name="fullName" value="{{employee.fullName}}" />
-  <br />
-  <input type="text" name="employeeID" value={{employee.employeeID}} />
-  <br />
-  <label>Hire Date</label>
-  <br />
-  <input type="date" name="hireDate" value={{employee.hireDate}} />
-  <br />
-  <select name="role">
-    <option>Role</option>
-    <option value="MGR">Manager</option>
-    <option value="FOH">Front-of-house</option>
-    <option value="BOH">Back-of-hosue</option>
-  </select>
-  <br />
-  <select name="status">
-    <option>Status</option>
-    <option value="FT">Full-time</option>
-    <option value="PT">Part-time</option>
-  </select>
-  <br />
-  <select name="privilege">
-    <option>Privilege</option>
-    <option value="Admin">Admin</option>
-    <option value="Editor">Editor</option>
-    <option value="None">None</option>
-  </select>
-  <br />
-  <select name="reportsTo">
-    <option>Reports To</option>
-    {{#each managers}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <button type="submit">Confirm Changes</button>
-</form>
-<br />
-<form method="POST" action="/admin/{{employee._id}}/delete">
-  <button type="submit">Delete Employee</button>
-</form>
+<div class="form-pages">
+  <div class="form-titles">
+    <h2>Edit Employee</h2>
+  </div>
+  <div class="form-standard">
+    <form method="POST" action="/admin/{{employee._id}}/edit-employee">
+      <label>Hire Date</label>
+      <br />
+      <input
+        class="login-box"
+        type="date"
+        name="hireDate"
+        value={{employee.hireDate}}
+      />
+      <br />
+      <input
+        class="login-box"
+        type="text"
+        name="username"
+        value={{employee.username}}
+      />
+      <br />
+      <input
+        class="login-box"
+        type="password"
+        name="password"
+        placeholder="Password"
+      />
+      <br />
+      <input
+        class="login-box"
+        type="text"
+        name="fullName"
+        value="{{employee.fullName}}"
+      />
+      <br />
+      <input
+        class="login-box"
+        type="text"
+        name="employeeID"
+        value={{employee.employeeID}}
+      />
+      <br />
+      <select class="login-box" name="role">
+        <option>Role</option>
+        <option value="MGR">Manager</option>
+        <option value="FOH">Front-of-house</option>
+        <option value="BOH">Back-of-hosue</option>
+      </select>
+      <br />
+      <select class="login-box" name="status">
+        <option>Status</option>
+        <option value="FT">Full-time</option>
+        <option value="PT">Part-time</option>
+      </select>
+      <br />
+      <select class="login-box" name="privilege">
+        <option>Privilege</option>
+        <option value="Admin">Admin</option>
+        <option value="Editor">Editor</option>
+        <option value="None">None</option>
+      </select>
+      <br />
+      <select class="login-box" name="reportsTo">
+        <option>Reports To</option>
+        {{#each managers}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <button class="reg-button-duo" type="submit">Confirm Changes</button>
+      <form method="POST" action="/admin/{{employee._id}}/delete">
+        <button class="reg-button-duo" type="submit">Delete Employee</button>
+      </form>
+    </form>
+  </div>
+</div>

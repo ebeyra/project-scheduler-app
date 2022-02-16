@@ -1,26 +1,44 @@
-<h2>Employee Details</h2>
-Employee ID:
-{{employee.employeeID}}
-<br />
-Full Name:
-{{employee.fullName}}
-<br />
-Username:
-{{employee.username}}
-<br />
-Hire Date:
-{{employee.hireDate}}
-<br />
-Role:
-{{employee.role}}
-<br />
-Status:
-{{employee.status}}
-<br />
-Auth Status:
-{{employee.privilege}}
-<br />
-Reports To:
-{{employee.reportsTo}}
-<br />
-<button><a href="/admin/{{employee._id}}/edit-employee">Edit Employee</a></button>
+<div class="form-pages">
+  <div class="form-titles">
+    <h2>Employee Details</h2>
+  </div>
+  <div class="form-standard-details">
+    <div>
+      <label>Hire Date:</label>
+      <br />
+      <p class="details-boxes">{{employee.hireDate}}</p>
+      <br />
+      <label>Employee ID:</label>
+      <br />
+      <p class="details-boxes">{{employee.employeeID}}</p>
+      <br />
+      <label>Full Name:</label>
+      <br />
+      <p class="details-boxes">{{employee.fullName}}</p>
+      <br />
+      <label>Username:</label>
+      <br />
+      <p class="details-boxes">{{employee.username}}</p>
+    </div>
+    <div>
+      <label>Role:</label>
+      <br />
+      <p class="details-boxes">{{employee.role}}</p>
+      <br />
+      <label>Status:</label>
+      <br />
+      <p class="details-boxes">{{employee.status}}</p>
+      <br />
+      <label>Auth Status:</label>
+      <br />
+      <p class="details-boxes">{{employee.privilege}}</p>
+      <br />
+      <label>Reports To:</label>
+      <br />
+      <p class="details-boxes">{{employee.reportsTo}}</p>
+    </div>
+  </div>
+  <button class="reg-button-details"><a
+      href="/admin/{{employee._id}}/edit-employee"
+    >Edit Employee</a></button>
+</div>
