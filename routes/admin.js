@@ -90,10 +90,16 @@ router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
   //     res.render("admin/profile", { temperature, weatherDesc, city });
   res.render("admin/profile");
 });
-// .catch((err) => {
-//   console.log("Something went wrong", err);
+//     .catch((err) => {
+//       console.log("Something went wrong", err);
+//     });
 // });
-// });
+
+// Profile view after leaving the profile welcome
+
+router.get("/profile-after", isLoggedIn, isAdmin, (req, res, next) => {
+  res.render("admin/profile-after");
+});
 
 // View schedule
 

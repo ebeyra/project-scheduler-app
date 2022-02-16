@@ -1,49 +1,77 @@
+<div class="profile-box">
+  <a href="/employee/profile-after">Back to Profile</a>
+</div>
 <div class="form-pages">
   <div class="form-titles">
-<h2>Create Employee</h2>
-</div>
-<div class="form-standard">
-<form method="POST" action="/employee/create-employee">
-<label>Hire Date</label>
-  <br />
-  <input type="date" name="hireDate" placeholder="Hire Date" class="login-box"/>
-  <br />
-  <input type="text" name="username" placeholder="Username" class="login-box"/>
-  <br />
-  <input type="password" name="password" placeholder="Password" class="login-box"/>
-  <br />
-  <input type="text" name="fullName" placeholder="Full Name" class="login-box"/>
-  <br />
-  <input type="text" name="employeeID" placeholder="Employee ID" class="login-box"/>
-  <br />
-  <select name="role" class="login-box">
-    <option>Role</option>
-    <option value="MGR">Manager</option>
-    <option value="FOH">Front-of-house</option>
-    <option value="BOH">Back-of-house</option>
-  </select>
-  <br />
-  <select name="status" class="login-box">
-    <option>Status</option>
-    <option value="FT">Full-time</option>
-    <option value="PT">Part-time</option>
-  </select>
-  <br />
-  <select name="privilege" class="login-box">
-    <option>Privilege</option>
-    <option value="Admin">Admin</option>
-    <option value="Editor">Editor</option>
-    <option value="None">None</option>
-  </select>
-  <br />
-  <select name="reportsTo" class="login-box">
-    <option>Reports To</option>
-    {{#each managers}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <button type="submit" class="reg-button">Create Employee</button>
-</form>
-</div>
+    <h2>Create Employee</h2>
+  </div>
+  <div class="form-standard">
+    <form method="POST" action="/employee/create-employee">
+      <label>Hire Date</label>
+      <br />
+      <input
+        type="date"
+        name="hireDate"
+        placeholder="Hire Date"
+        class="login-box"
+      />
+      <br />
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="login-box"
+      />
+      <br />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        class="login-box"
+      />
+      <br />
+      <input
+        type="text"
+        name="fullName"
+        placeholder="Full Name"
+        class="login-box"
+      />
+      <br />
+      <input
+        type="text"
+        name="employeeID"
+        placeholder="Employee ID"
+        class="login-box"
+      />
+      <br />
+      <select name="role" class="login-box">
+        <option>Role</option>
+        <option value="MGR">Manager</option>
+        <option value="FOH">Front-of-house</option>
+        <option value="BOH">Back-of-house</option>
+      </select>
+      <br />
+      <select name="status" class="login-box">
+        <option>Status</option>
+        <option value="FT">Full-time</option>
+        <option value="PT">Part-time</option>
+      </select>
+      <br />
+      <select name="privilege" class="login-box">
+        <option>Privilege</option>
+        <option value="Admin">Admin</option>
+        <option value="Editor">Editor</option>
+        <option value="None">None</option>
+      </select>
+      <br />
+      <select name="reportsTo" class="login-box">
+        <option>Reports To</option>
+        {{#each managers}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <button type="submit" class="reg-button">Create Employee</button>
+    </form>
+  </div>
 </div>

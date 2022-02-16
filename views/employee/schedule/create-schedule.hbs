@@ -1,37 +1,40 @@
+<div class="profile-box">
+  <a href="/employee/profile-after">Back to Profile</a>
+</div>
 <div class="form-pages">
   <div class="form-titles">
-<h2>Create Schedule</h2>
-</div>
-<div class="form-standard-sched">
-<form method="POST" action="/employee/schedule/create-schedule">
-  <label>Date</label>
-  <input type="date" name="date" class="login-box"/>
-  <br />
-  <label>Managers</label>
-  <br />
-  <select multiple name="mgr" class="login-box">
-    {{#each managers}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <label>Front of House</label>
-  <br />
-  <select multiple name="foh" class="login-box">
-    {{#each frontOfHouse}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <label>Back of House</label>
-  <br />
-  <select multiple name="boh" class="login-box">
-    {{#each backOfHouse}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <button class="reg-button" type="submit">Create Schedule</button>
-</form>
-</div>
+    <h2>Create Schedule</h2>
+  </div>
+  <div class="form-standard-sched">
+    <form method="POST" action="/employee/schedule/create-schedule">
+      <label>Date</label>
+      <input type="date" name="date" class="login-box" />
+      <br />
+      <label>Managers</label>
+      <br />
+      <select multiple name="mgr" class="login-box">
+        {{#each managers}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <label>Front of House</label>
+      <br />
+      <select multiple name="foh" class="login-box">
+        {{#each frontOfHouse}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <label>Back of House</label>
+      <br />
+      <select multiple name="boh" class="login-box">
+        {{#each backOfHouse}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <button class="reg-button" type="submit">Create Schedule</button>
+    </form>
+  </div>
 </div>

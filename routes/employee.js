@@ -70,6 +70,12 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
   res.render("employee/profile");
 });
 
+// Profile view after leaving the profile welcome
+
+router.get("/profile-after", isLoggedIn, (req, res, next) => {
+  res.render("employee/profile-after");
+});
+
 // View schedule
 
 router.get("/schedule/view-schedule", isLoggedIn, (req, res, next) => {
