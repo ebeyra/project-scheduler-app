@@ -91,7 +91,14 @@ h1 {
   padding: 15px;
   margin-top: -20px;
 }
-
+.reg-button-small {
+  font-size: 14;
+  color: white;
+  background-color: royalblue;
+  border: none;
+  padding: 10px;
+  margin-top: -20px;
+}
 .reg-button-duo {
   font-size: 15;
   color: white;
@@ -167,7 +174,7 @@ h1 {
   font-size: 0.8rem;
   list-style-type: none;
   position: absolute;
-  top: 17%;
+  top: 150px;
   right: 0;
 }
 
@@ -219,6 +226,16 @@ h1 {
   justify-content: space-evenly;
 }
 
+.form-schedule-details {
+  display: flex;
+  border: 1px solid black;
+  width: 300px;
+  height: 400px;
+  padding: 30px;
+  margin: auto;
+  justify-content: space-evenly;
+}
+
 .form-standard-details label {
   color: royalblue;
 }
@@ -239,6 +256,42 @@ h1 {
   font-size: 0.8rem;
   text-decoration: none;
   position: absolute;
-  top: 17%;
+  top: 150px;
+  left: 0;
+}
+
+.schedule-details {
+  font-size: small;
+  border: 1px solid black;
+  width: 400px;
+  padding: 30px;
+  margin: auto;
+  align-items: center;
+}
+
+.schedule-details label {
+  color: royalblue;
+}
+
+.delete-button {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.5rem;
+  text-decoration: none;
+  position: absolute;
+  top: 230px;
+  left: 50%;
+  margin-left: -60px;
+  transform: translate(0, -50%);
+}
+
+.logout-box {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2%;
+  font-size: 0.8rem;
+  text-decoration: none;
+  position: absolute;
+  top: 170px;
   left: 0;
 }

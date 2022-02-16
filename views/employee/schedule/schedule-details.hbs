@@ -1,48 +1,55 @@
 <div class="profile-box">
   <a href="/employee/profile-after">Back to Profile</a>
 </div>
-<h2>Schedule View Page</h2>
-<table border="1" cellspacing="1" cellpadding="1">
-  <thead>
-    <tr>
-      <th>{{dayOfWeek}}</th>
-    </tr>
-    <tr>
-      <td>{{staff.date}}</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Managers</td>
-    </tr>
-    <tr>
-      <td>
-        {{#each staff}}
-          <ul>{{mgr}}</ul>
-        {{/each}}
-      </td>
-    </tr>
-    <td>Front of House</td>
-    <tr>
-      <td>
-        {{#each staff}}
-          {{#each foh}}
-            <ul>{{this}}</ul>
+<div class="form-pages">
+  <div class="form-titles">
+    <h2>Daily Schedule</h2>
+  </div>
+  <table class="schedule-details">
+    <thead>
+      <tr>
+        <th>
+          {{staff.date}}
+          <br />
+          {{dayOfWeek}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><label>Managers</label></td>
+      </tr>
+      <tr>
+        <td class="details-boxes">
+          {{#each staff}}
+            {{#each mgr}}
+              <ul>{{this}}</ul>
+            {{/each}}
           {{/each}}
-        {{/each}}
-      </td>
-    </tr>
-    <td>Back of House</td>
-    <tr>
-      <td>
-        {{#each staff}}
-          {{#each boh}}
-            <ul>{{this}}</ul>
+        </td>
+      </tr>
+      <td><label>Front of House</label></td>
+      <tr>
+        <td class="details-boxes">
+          {{#each staff}}
+            {{#each foh}}
+              <ul>{{this}}</ul>
+            {{/each}}
           {{/each}}
-        {{/each}}
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br />
-<button><a href="/employee/schedule/{{staff._id}}/edit-schedule">Edit Schedule</a></button>
+        </td>
+      </tr>
+      <td><label>Back of House</label></td>
+      <tr>
+        <td class="details-boxes">
+          {{#each staff}}
+            {{#each boh}}
+              <ul>{{this}}</ul>
+            {{/each}}
+          {{/each}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <button class="reg-button-details"><a href="/employee/schedule/{{staff._id}}/edit-schedule">Edit Schedule</a></button>
+</div>

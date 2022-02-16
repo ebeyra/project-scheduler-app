@@ -1,37 +1,47 @@
 <div class="profile-box">
   <a href="/admin/profile-after">Back to Profile</a>
 </div>
-<h2>Edit Schedule</h2>
-<form
-  method="POST"
-  action="/admin/schedule/{{foundSchedule._id}}/edit-schedule"
->
-  Managers
-  <br />
-  <select multiple name="mgr">
-    {{#each managers}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  Front of House
-  <br />
-  <select multiple name="foh">
-    {{#each frontOfHouse}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  Back of House
-  <br />
-  <select multiple name="boh">
-    {{#each backOfHouse}}
-      <option value="{{fullName}}">{{fullName}}</option>
-    {{/each}}
-  </select>
-  <br />
-  <button type="submit">Confirm Changes</button>
-</form>
-<form method="POST" action="/admin/schedule/{{foundSchedule._id}}/delete">
-  <button type="submit">Delete Schedule</button>
-</form>
+<div class="form-pages">
+  <div class="form-titles">
+    <h2>Edit Schedule</h2>
+  </div>
+  <div class="schedule-details">
+    <form
+      method="POST"
+      action="/admin/schedule/{{foundSchedule._id}}/edit-schedule"
+    >
+      <label>Managers</label>
+      <br />
+      <select class="login-box" multiple name="mgr">
+        {{#each managers}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <label>Front of House</label>
+      <br />
+      <select class="login-box" multiple name="foh">
+        {{#each frontOfHouse}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <label>Back of House</label>
+      <br />
+      <select class="login-box" multiple name="boh">
+        {{#each backOfHouse}}
+          <option value="{{fullName}}">{{fullName}}</option>
+        {{/each}}
+      </select>
+      <br />
+      <button class="reg-button-duo" type="submit">Confirm Changes</button>
+    </form>
+    <form
+      class="delete-button"
+      method="POST"
+      action="/admin/schedule/{{foundSchedule._id}}/delete"
+    >
+      <button type="submit">Delete Schedule</button>
+    </form>
+  </div>
+</div>

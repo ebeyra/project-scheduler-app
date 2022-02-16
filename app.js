@@ -37,12 +37,12 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 600000,
+      maxAge: 6000000,
       // secure: true,
     },
     store: MongoStore.create({
       mongoUrl: "mongodb://localhost/lab-express-rooms-with-views",
-      ttl: 600000,
+      ttl: 6000000,
     }),
   })
 );

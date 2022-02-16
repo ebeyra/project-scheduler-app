@@ -72,9 +72,13 @@
       </select>
       <br />
       <button class="reg-button-duo" type="submit">Confirm Changes</button>
-      <form method="POST" action="/employee/{{employee._id}}/delete">
-        <button class="reg-button-duo" type="submit">Delete Employee</button>
-      </form>
+    </form>
+    <form
+      class="delete-button"
+      method="POST"
+      action="/employee/{{employee._id}}/delete"
+    >
+      <button type="submit">Delete Employee</button>
     </form>
   </div>
 </div>
