@@ -80,6 +80,9 @@ router.get("/profile-after", isLoggedIn, (req, res, next) => {
 
 router.get("/schedule/view-schedule", isLoggedIn, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
+    for (let i = 0; i < foundSchedule.length; i++) {
+      foundSchedule[i].date = foundSchedule[i].date.substring(5, 10);
+    }
     res.render("employee/schedule/view-schedule", { foundSchedule });
   });
 });
@@ -323,7 +326,7 @@ router.post("/:id/edit-employee", isLoggedIn, isEditor, (req, res, next) => {
     role: req.body.role,
     status: req.body.status,
     privilege: req.body.privilege,
-    reportsTo: req.body.reportsTo
+    reportsTo: req.body.reportsTo,
   })
     .then((results) => {
       console.log("Employee updated", results);

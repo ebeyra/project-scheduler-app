@@ -62,8 +62,24 @@ router.post("/login", (req, res, next) => {
       if (!match) {
         return res.send("Incorrect password");
       }
-      req.session.user = foundAdmin;
-      res.render("admin/profile", { admin: req.session.user });
+      axios
+        .request(currentWeatherInfo)
+        .then((weatherInfo) => {
+          let apiResponse = weatherInfo.data.data[0];
+          let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
+          let weatherDesc = apiResponse.weather.description;
+          let city = apiResponse.city_name;
+          req.app.locals.temperature = temperature;
+          req.app.locals.city = city;
+          req.app.locals.weatherDesc = weatherDesc;
+          req.session.user = foundAdmin;
+          req.app.locals.globalUser = foundAdmin;
+          res.render("admin/profile", { admin: req.session.user });
+          // res.render("admin/profile", { temperature, weatherDesc, city });
+        })
+        .catch((err) => {
+          console.log("Something went wrong", err);
+        });
     })
     .catch((err) => {
       console.log("Something went wrong", err);
@@ -73,6 +89,7 @@ router.post("/login", (req, res, next) => {
 // Log Out
 
 router.get("/logout", isLoggedIn, (req, res, next) => {
+  req.app.locals.globalUser = null;
   req.session.destroy();
   res.render("admin/logout");
 });
@@ -87,6 +104,7 @@ router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
   //     let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
   //     let weatherDesc = apiResponse.weather.description;
   //     let city = apiResponse.city_name;
+  //     console.log(weatherInfo.data);
   //     res.render("admin/profile", { temperature, weatherDesc, city });
   res.render("admin/profile");
 });
@@ -101,7 +119,7 @@ router.get("/profile-after", isLoggedIn, isAdmin, (req, res, next) => {
   res.render("admin/profile-after");
 });
 
-// View schedule
+// View schedules
 
 router.get("/schedule/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
@@ -334,7 +352,11 @@ router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
       const d = new Date(staff.date);
       let day = d.getDay();
       let dayOfWeek = weekday[day + 1];
-      res.render("admin/schedule/schedule-details", { staff, dayOfWeek });
+      res.render("admin/schedule/schedule-details", {
+        staff,
+        dayOfWeek,
+        calendarDate,
+      });
     })
     .catch((err) => {
       console.log("Something went wrong", err);

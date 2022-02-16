@@ -1,6 +1,10 @@
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
+// Model imports
+const Admin = require("./models/Admin.model");
+const Employee = require("./models/Employee.model");
+
 // ℹ️ Gets access to environment variables/settings
 // https://www.npmjs.com/package/dotenv
 require("dotenv/config");
@@ -46,6 +50,30 @@ app.use(
     }),
   })
 );
+
+// Global Users
+
+app.use((req, res, next) => {
+  if (req.session.user) {
+    Admin.findById(req.session.user._id).then((user) => {
+      req.app.locals.adminUser = user;
+      next();
+    });
+  } else {
+    next();
+  }
+});
+
+// app.use((req, res, next) => {
+//   if (req.session.user) {
+//     Employee.findById(req.session.user._id).then((user) => {
+//       req.app.locals.employeeUser = user;
+//       next();
+//     });
+//   } else {
+//     next();
+//   }
+// });
 
 const index = require("./routes/index");
 app.use("/", index);

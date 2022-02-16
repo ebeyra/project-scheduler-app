@@ -56,7 +56,7 @@ h1 {
   justify-content: center;
   font-size: 20;
   font-weight: 900;
-  padding: 0 3%;
+  padding: 0 20px;
 }
 
 .main-login {
@@ -294,4 +294,29 @@ h1 {
   position: absolute;
   top: 170px;
   left: 0;
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 800px;
+  margin: auto;
+}
+
+.schedule-grid-box {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  text-align: center;
+}
+
+.schedule-grid-text {
+  font-size: 17;
+}
+
+.calendar-box-images {
+  margin-top: 5px;
+  max-height: 50px;
+  max-width: 75px;
 }
