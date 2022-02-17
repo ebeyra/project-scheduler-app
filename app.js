@@ -1,5 +1,6 @@
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Model imports
 const Admin = require("./models/Admin.model");
@@ -45,7 +46,7 @@ app.use(
       // secure: true,
     },
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost/lab-express-rooms-with-views",
+      mongoUrl: MONGODB_URI,
       ttl: 6000000,
     }),
   })
