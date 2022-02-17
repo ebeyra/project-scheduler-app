@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const redirect = require("express/lib/response");
+const axios = require("axios");
 const saltRounds = 10;
 const weekday = [
   "Sunday",
@@ -11,6 +12,18 @@ const weekday = [
   "Friday",
   "Saturday",
 ];
+
+// API data
+
+const currentWeatherInfo = {
+  method: "GET",
+  url: "https://weatherbit-v1-mashape.p.rapidapi.com/current",
+  params: { lon: "-80.1918", lat: "25.7617" },
+  headers: {
+    "x-rapidapi-host": "weatherbit-v1-mashape.p.rapidapi.com",
+    "x-rapidapi-key": "f4ba7c63e8mshd3469625cf6b591p190b6bjsned2971a08c98",
+  },
+};
 
 // Model imports
 const Admin = require("../models/Admin.model");
@@ -33,28 +46,33 @@ router.post("/login", (req, res, next) => {
   } else if (!req.body.password) {
     res.send("You need a password");
   }
-
-  Employee.findOne({ username: req.body.username })
-    .then((foundEmployee) => {
-      if (!foundEmployee) {
-        return res.send("Incorrect username");
-      }
-
-      const match = bcrypt.compareSync(
-        req.body.password,
-        foundEmployee.password
-      );
-
-      if (!match) {
-        return res.send("Incorrect password");
-      }
-
-      req.session.user = foundEmployee;
-      res.render("employee/profile", { employee: req.session.user });
-    })
-    .catch((err) => {
-      console.log("Something went wrong", err);
-    });
+  Employee.findOne({ username: req.body.username }).then((foundEmployee) => {
+    if (!foundEmployee) {
+      return res.send("Incorrect username");
+    }
+    const match = bcrypt.compareSync(req.body.password, foundEmployee.password);
+    if (!match) {
+      return res.send("Incorrect password");
+    }
+    axios
+      .request(currentWeatherInfo)
+      .then((weatherInfo) => {
+        let apiResponse = weatherInfo.data.data[0];
+        let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
+        let weatherDesc = apiResponse.weather.description;
+        let city = apiResponse.city_name;
+        req.app.locals.temperature = temperature;
+        req.app.locals.city = city;
+        req.app.locals.weatherDesc = weatherDesc;
+        req.session.user = foundEmployee;
+        req.app.locals.globalUser = foundEmployee;
+        // res.render("employee/profile", { employee: req.session.user });
+        res.render("employee/profile", { temperature, weatherDesc, city });
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  });
 });
 
 // Log Out
@@ -155,7 +173,7 @@ router.post(
   "/schedule/create-schedule",
   isLoggedIn,
   isEditor,
-  (req, res, next) => {
+  async (req, res, next) => {
     if (!req.body.date) {
       return res.send("You must enter a date");
     } else if (!req.body.mgr) {
@@ -166,19 +184,25 @@ router.post(
       return res.send("You must schedule at least one back of house employee");
     }
 
-    Schedule.create({
-      date: req.body.date,
-      mgr: req.body.mgr,
-      foh: req.body.foh,
-      boh: req.body.boh,
-    })
-      .then((newSchedule) => {
-        console.log("Schedule created", newSchedule);
-        res.redirect("/employee/schedule/view-schedule");
-      })
-      .catch((err) => {
-        console.log("Something went wrong", err);
+    try {
+      let date = await Schedule.findOne({ date: req.body.date });
+      if (date !== null) {
+        res.render("employee/schedule/create-schedule", {
+          message: "A schedule already exists for this day",
+        });
+        return;
+      }
+
+      await Schedule.create({
+        date: req.body.date,
+        mgr: req.body.mgr,
+        foh: req.body.foh,
+        boh: req.body.boh,
       });
+      res.redirect("/employee/schedule/view-schedule");
+    } catch (err) {
+      res.render("employee/schedule/create-schedule", { message: err.message });
+    }
   }
 );
 
@@ -208,49 +232,62 @@ router.get("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
   });
 });
 
-router.post("/create-employee", isLoggedIn, isEditor, (req, res, next) => {
-  if (!req.body.username) {
-    return res.send("You must enter a username");
-  } else if (!req.body.password) {
-    return res.send("You must enter a password");
-  } else if (!req.body.fullName) {
-    return res.send("You must enter a full name");
-  } else if (!req.body.employeeID) {
-    return res.send("You must enter an employee ID");
-  } else if (!req.body.hireDate) {
-    return res.send("You must enter a hire date");
-  } else if (req.body.role === "Role") {
-    return res.send("You must specify a role");
-  } else if (req.body.status === "Status") {
-    return res.send("You must specify a status");
-  } else if (req.body.privilege === "Privilege") {
-    return res.send("You must specify authorization level");
-  } else if (req.body.reportsTo === "Reports To") {
-    return res.send("You must specify reporting relationship");
-  }
+router.post(
+  "/create-employee",
+  isLoggedIn,
+  isEditor,
+  async (req, res, next) => {
+    if (!req.body.username) {
+      return res.send("You must enter a username");
+    } else if (!req.body.password) {
+      return res.send("You must enter a password");
+    } else if (!req.body.fullName) {
+      return res.send("You must enter a full name");
+    } else if (!req.body.employeeID) {
+      return res.send("You must enter an employee ID");
+    } else if (!req.body.hireDate) {
+      return res.send("You must enter a hire date");
+    } else if (req.body.role === "Role") {
+      return res.send("You must specify a role");
+    } else if (req.body.status === "Status") {
+      return res.send("You must specify a status");
+    } else if (req.body.privilege === "Privilege") {
+      return res.send("You must specify authorization level");
+    } else if (req.body.reportsTo === "Reports To") {
+      return res.send("You must specify reporting relationship");
+    }
 
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPass = bcrypt.hashSync(req.body.password, salt);
+    try {
+      let user = await Employee.findOne({ username: req.body.username });
+      if (user !== null) {
+        res.render("employee/create-employee", {
+          message: "The username already exists",
+        });
+        return;
+      }
 
-  Employee.create({
-    username: req.body.username,
-    password: hashedPass,
-    fullName: req.body.fullName,
-    employeeID: req.body.employeeID,
-    hireDate: req.body.hireDate,
-    role: req.body.role,
-    status: req.body.status,
-    privilege: req.body.privilege,
-    reportsTo: req.body.reportsTo,
-  })
-    .then((newEmployee) => {
-      console.log("Employee created", newEmployee);
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPass = bcrypt.hashSync(req.body.password, salt);
+
+      await Employee.create({
+        username: req.body.username,
+        password: hashedPass,
+        fullName: req.body.fullName,
+        employeeID: req.body.employeeID,
+        hireDate: req.body.hireDate,
+        role: req.body.role,
+        status: req.body.status,
+        privilege: req.body.privilege,
+        reportsTo: req.body.reportsTo,
+      });
       res.redirect("/employee/view-all");
-    })
-    .catch((err) => {
-      console.log("Something went wrong", err);
-    });
-});
+    } catch (err) {
+      res.render("employee/create-employee", {
+        message: err.message,
+      });
+    }
+  }
+);
 
 // View details on single account
 

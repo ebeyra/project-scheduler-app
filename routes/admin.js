@@ -12,15 +12,8 @@ const weekday = [
   "Friday",
   "Saturday",
 ];
-const weatherForecast = {
-  method: "GET",
-  url: "https://weatherbit-v1-mashape.p.rapidapi.com/forecast/daily",
-  params: { lat: "25.7617", lon: "-80.1918" },
-  headers: {
-    "x-rapidapi-host": "weatherbit-v1-mashape.p.rapidapi.com",
-    "x-rapidapi-key": "f4ba7c63e8mshd3469625cf6b591p190b6bjsned2971a08c98",
-  },
-};
+
+// API data
 
 const currentWeatherInfo = {
   method: "GET",
@@ -40,6 +33,7 @@ const Employee = require("../models/Employee.model");
 // Middleware imports
 const { isAdmin, isEditor, isEmployee } = require("../middleware/hasAuth");
 const isLoggedIn = require("../middleware/isLoggedIn");
+const res = require("express/lib/response");
 
 // Log In
 
@@ -53,37 +47,33 @@ router.post("/login", (req, res, next) => {
   } else if (!req.body.password) {
     res.send("You need a password");
   }
-  Admin.findOne({ username: req.body.username })
-    .then((foundAdmin) => {
-      if (!foundAdmin) {
-        return res.send("Incorrect username");
-      }
-      const match = bcrypt.compareSync(req.body.password, foundAdmin.password);
-      if (!match) {
-        return res.send("Incorrect password");
-      }
-      axios
-        .request(currentWeatherInfo)
-        .then((weatherInfo) => {
-          let apiResponse = weatherInfo.data.data[0];
-          let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
-          let weatherDesc = apiResponse.weather.description;
-          let city = apiResponse.city_name;
-          req.app.locals.temperature = temperature;
-          req.app.locals.city = city;
-          req.app.locals.weatherDesc = weatherDesc;
-          req.session.user = foundAdmin;
-          req.app.locals.globalUser = foundAdmin;
-          res.render("admin/profile", { admin: req.session.user });
-          // res.render("admin/profile", { temperature, weatherDesc, city });
-        })
-        .catch((err) => {
-          console.log("Something went wrong", err);
-        });
-    })
-    .catch((err) => {
-      console.log("Something went wrong", err);
-    });
+  Admin.findOne({ username: req.body.username }).then((foundAdmin) => {
+    if (!foundAdmin) {
+      return res.send("Incorrect username");
+    }
+    const match = bcrypt.compareSync(req.body.password, foundAdmin.password);
+    if (!match) {
+      return res.send("Incorrect password");
+    }
+    axios
+      .request(currentWeatherInfo)
+      .then((weatherInfo) => {
+        let apiResponse = weatherInfo.data.data[0];
+        let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
+        let weatherDesc = apiResponse.weather.description;
+        let city = apiResponse.city_name;
+        req.app.locals.temperature = temperature;
+        req.app.locals.city = city;
+        req.app.locals.weatherDesc = weatherDesc;
+        req.session.user = foundAdmin;
+        req.app.locals.globalUser = foundAdmin;
+        // res.render("admin/profile", { admin: req.session.user });
+        res.render("admin/profile", { temperature, weatherDesc, city });
+      })
+      .catch((err) => {
+        console.log("Something went wrong", err);
+      });
+  });
 });
 
 // Log Out
@@ -97,21 +87,8 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
 // Profile view for creation actions
 
 router.get("/profile", isLoggedIn, isAdmin, (req, res, next) => {
-  // axios
-  //   .request(currentWeatherInfo)
-  //   .then((weatherInfo) => {
-  //     let apiResponse = weatherInfo.data.data[0];
-  //     let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
-  //     let weatherDesc = apiResponse.weather.description;
-  //     let city = apiResponse.city_name;
-  //     console.log(weatherInfo.data);
-  //     res.render("admin/profile", { temperature, weatherDesc, city });
   res.render("admin/profile");
 });
-//     .catch((err) => {
-//       console.log("Something went wrong", err);
-//     });
-// });
 
 // Profile view after leaving the profile welcome
 
@@ -239,7 +216,7 @@ router.post(
   "/schedule/create-schedule",
   isLoggedIn,
   isAdmin,
-  (req, res, next) => {
+  async (req, res, next) => {
     if (!req.body.date) {
       return res.send("You must enter a date");
     } else if (!req.body.mgr) {
@@ -250,19 +227,25 @@ router.post(
       return res.send("You must schedule at least one back of house employee");
     }
 
-    Schedule.create({
-      date: req.body.date,
-      mgr: req.body.mgr,
-      foh: req.body.foh,
-      boh: req.body.boh,
-    })
-      .then((newSchedule) => {
-        console.log("Schedule created", newSchedule);
-        res.redirect("/admin/schedule/view-schedule");
-      })
-      .catch((err) => {
-        console.log("Something went wrong", err);
+    try {
+      let date = await Schedule.findOne({ date: req.body.date });
+      if (date !== null) {
+        res.render("admin/schedule/create-schedule", {
+          message: "A schedule already exists for this day",
+        });
+        return;
+      }
+
+      await Schedule.create({
+        date: req.body.date,
+        mgr: req.body.mgr,
+        foh: req.body.foh,
+        boh: req.body.boh,
       });
+      res.redirect("/admin/schedule/view-schedule");
+    } catch (err) {
+      res.render("admin/schedule/create-schedule", { message: err.message });
+    }
   }
 );
 
@@ -292,7 +275,7 @@ router.get("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
   });
 });
 
-router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
+router.post("/create-employee", isLoggedIn, isAdmin, async (req, res, next) => {
   if (!req.body.username) {
     return res.send("You must enter a username");
   } else if (!req.body.password) {
@@ -311,27 +294,35 @@ router.post("/create-employee", isLoggedIn, isAdmin, (req, res, next) => {
     return res.send("You must specify authorization level");
   }
 
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPass = bcrypt.hashSync(req.body.password, salt);
+  try {
+    let user = await Employee.findOne({ username: req.body.username });
+    if (user !== null) {
+      res.render("admin/create-employee", {
+        message: "The username already exists",
+      });
+      return;
+    }
 
-  Employee.create({
-    username: req.body.username,
-    password: hashedPass,
-    fullName: req.body.fullName,
-    employeeID: req.body.employeeID,
-    hireDate: req.body.hireDate,
-    role: req.body.role,
-    status: req.body.status,
-    privilege: req.body.privilege,
-    reportsTo: req.body.reportsTo,
-  })
-    .then((newEmployee) => {
-      console.log("Employee created", newEmployee);
-      res.redirect("/admin/view-all");
-    })
-    .catch((err) => {
-      console.log("Something went wrong", err);
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPass = bcrypt.hashSync(req.body.password, salt);
+
+    await Employee.create({
+      username: req.body.username,
+      password: hashedPass,
+      fullName: req.body.fullName,
+      employeeID: req.body.employeeID,
+      hireDate: req.body.hireDate,
+      role: req.body.role,
+      status: req.body.status,
+      privilege: req.body.privilege,
+      reportsTo: req.body.reportsTo,
     });
+    res.redirect("/admin/view-all");
+  } catch (err) {
+    res.render("admin/create-employee", {
+      message: err.message,
+    });
+  }
 });
 
 // View details on single account
