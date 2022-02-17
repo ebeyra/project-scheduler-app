@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+require("dotenv/config");
+const MONGODB_URI = process.env.MONGODB_URI
 
 // Model imports
 const Admin = require("../models/Admin.model");
@@ -6,38 +8,18 @@ const Schedule = require("../models/Schedule.model");
 const Employee = require("../models/Employee.model");
 
 const adminAccount = {
-  username: "master",
-  password: "master",
-  admin: true,
-  editor: true,
-};
-
-const managerAccount = {
-  username: "a.smith",
-  password: "smith",
-  admin: false,
-  editor: true,
-  employeeID: "mgr001",
-  hireDate: new Date(2021, 02, 11),
-  role: "MGR",
-  status: "FT",
-};
-
-const employeeAccount = {
-  username: "t.anderson",
-  password: "anderson",
-  admin: false,
-  editor: false,
-  employeeID: "emp001",
-  hireDate: new Date(2021, 02, 11),
-  role: "FOH",
-  status: "FT",
+  username: "admin",
+  password: "admin",
+  fullName: "Administrator",
+  employeeID: "adm001",
+  hireDate: "2022-02-13",
+  privilege: "Admin"
 };
 
 // Seeding database
 
 mongoose
-  .connect("mongodb://localhost/project-scheduler-app")
+  .connect(MONGODB_URI)
   .then((x) => {
     console.log(
       `Connected to Mongo! Database name: "${x.connections[0].name}"`

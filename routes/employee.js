@@ -76,7 +76,7 @@ router.get("/profile-after", isLoggedIn, (req, res, next) => {
   res.render("employee/profile-after");
 });
 
-// View schedule
+// View schedules
 
 router.get("/schedule/view-schedule", isLoggedIn, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
@@ -174,7 +174,7 @@ router.post(
     })
       .then((newSchedule) => {
         console.log("Schedule created", newSchedule);
-        res.redirect("/employee/profile");
+        res.redirect("/employee/schedule/view-schedule");
       })
       .catch((err) => {
         console.log("Something went wrong", err);

@@ -123,6 +123,9 @@ router.get("/profile-after", isLoggedIn, isAdmin, (req, res, next) => {
 
 router.get("/schedule/view-schedule", isLoggedIn, isAdmin, (req, res, next) => {
   Schedule.find().then((foundSchedule) => {
+    for (let i = 0; i < foundSchedule.length; i++) {
+      foundSchedule[i].date = foundSchedule[i].date.substring(5, 10);
+    }
     res.render("admin/schedule/view-schedule", { foundSchedule });
   });
 });
@@ -255,7 +258,7 @@ router.post(
     })
       .then((newSchedule) => {
         console.log("Schedule created", newSchedule);
-        res.redirect("/admin/profile");
+        res.redirect("/admin/schedule/view-schedule");
       })
       .catch((err) => {
         console.log("Something went wrong", err);
@@ -355,7 +358,6 @@ router.get("/schedule/:id", isLoggedIn, isAdmin, (req, res, next) => {
       res.render("admin/schedule/schedule-details", {
         staff,
         dayOfWeek,
-        calendarDate,
       });
     })
     .catch((err) => {
