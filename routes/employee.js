@@ -304,7 +304,7 @@ router.get("/:id", isLoggedIn, isEditor, (req, res, next) => {
 
 //View details on a single schedule
 
-router.get("/schedule/:id", isLoggedIn, isEditor, (req, res, next) => {
+router.get("/schedule/:id", isLoggedIn, (req, res, next) => {
   Schedule.findById(req.params.id)
     .then((staff) => {
       const d = new Date(staff.date);
