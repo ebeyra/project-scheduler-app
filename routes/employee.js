@@ -64,8 +64,8 @@ router.post("/login", (req, res, next) => {
     //     req.app.locals.temperature = temperature;
     //     req.app.locals.city = city;
     //     req.app.locals.weatherDesc = weatherDesc;
-    //     req.session.user = foundEmployee;
-    //     req.app.locals.globalUser = foundEmployee;
+    req.session.user = foundEmployee;
+    req.app.locals.globalUser = foundEmployee;
     res.render("employee/profile", { employee: req.session.user });
     //     res.render("employee/profile", { temperature, weatherDesc, city });
     //   })
