@@ -325,3 +325,12 @@ h1 {
   color: red;
   font-size: medium;
 }
+
+.about-page {
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  width: 50%;
+  margin: auto;
+}

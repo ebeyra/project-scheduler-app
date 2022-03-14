@@ -55,24 +55,24 @@ router.post("/login", (req, res, next) => {
     if (!match) {
       return res.send("Incorrect password");
     }
-    axios
-      .request(currentWeatherInfo)
-      .then((weatherInfo) => {
-        let apiResponse = weatherInfo.data.data[0];
-        let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
-        let weatherDesc = apiResponse.weather.description;
-        let city = apiResponse.city_name;
-        req.app.locals.temperature = temperature;
-        req.app.locals.city = city;
-        req.app.locals.weatherDesc = weatherDesc;
-        req.session.user = foundAdmin;
-        req.app.locals.globalUser = foundAdmin;
-        // res.render("admin/profile", { admin: req.session.user });
-        res.render("admin/profile", { temperature, weatherDesc, city });
-      })
-      .catch((err) => {
-        console.log("Something went wrong", err);
-      });
+    // axios
+    //   .request(currentWeatherInfo)
+    //   .then((weatherInfo) => {
+    //     let apiResponse = weatherInfo.data.data[0];
+    //     let temperature = Math.floor(apiResponse.temp * (9 / 5) + 32) + "°";
+    //     let weatherDesc = apiResponse.weather.description;
+    //     let city = apiResponse.city_name;
+    //     req.app.locals.temperature = temperature;
+    //     req.app.locals.city = city;
+    //     req.app.locals.weatherDesc = weatherDesc;
+    //     req.session.user = foundAdmin;
+    //     req.app.locals.globalUser = foundAdmin;
+    res.render("admin/profile", { admin: req.session.user });
+    //     res.render("admin/profile", { temperature, weatherDesc, city });
+    //   })
+    //   .catch((err) => {
+    //     console.log("Something went wrong", err);
+    //   });
   });
 });
 

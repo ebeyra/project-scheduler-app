@@ -47,6 +47,7 @@ app.use(
     },
     store: MongoStore.create({
       mongoUrl: MONGODB_URI,
+      // mongoUrl: MONGODB_URI || "mongodb://localhost/project-scheduler-app",
       ttl: 6000000,
     }),
   })
